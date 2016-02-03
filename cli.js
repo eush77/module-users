@@ -10,7 +10,7 @@ var moduleUsage = require('module-usage'),
 var path = require('path');
 
 
-var app = App('Usage:  module-usage-viewer <name>');
+var app = App('Usage:  module-users <name>');
 
 (function main (argv) {
   if (argv.length != 1) {

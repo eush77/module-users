@@ -1,5 +1,5 @@
 {
-  "name": "module-usage-viewer",
+  "name": "module-users",
   "version": "0.0.0",
   "description": "Open examples of npm module usage in editor",
   "author": "Eugene Sharygin <eush77@gmail.com>",
@@ -8,10 +8,10 @@
   "files": [
     "cli.js"
   ],
-  "homepage": "https://github.com/eush77/module-usage-viewer",
-  "repository": "eush77/module-usage-viewer",
+  "homepage": "https://github.com/eush77/module-users",
+  "repository": "eush77/module-users",
   "bugs": {
-    "url": "https://github.com/eush77/module-usage-viewer/issues"
+    "url": "https://github.com/eush77/module-users/issues"
   },
   "keywords": [
     "browse",

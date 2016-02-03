@@ -1,18 +1,18 @@
-[![npm](https://nodei.co/npm/module-usage-viewer.png)](https://npmjs.com/package/module-usage-viewer)
+[![npm](https://nodei.co/npm/module-users.png)](https://npmjs.com/package/module-users)
 
-# module-usage-viewer
+# module-users
 
 [![Dependency Status][david-badge]][david]
 
 Open examples of npm module usage in editor.
 
-[david]: https://david-dm.org/eush77/module-usage-viewer
-[david-badge]: https://david-dm.org/eush77/module-usage-viewer.png
+[david]: https://david-dm.org/eush77/module-users
+[david-badge]: https://david-dm.org/eush77/module-users.png
 
 ## Install
 
 ```
-npm install module-usage-viewer
+npm install module-users
 ```
 
 ## License
