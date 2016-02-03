@@ -21,6 +21,13 @@ $ module-users <pkgname>
 
 Scans npm registry for modules that depend on `<pkgname>` and downloads and opens them in $EDITOR, one after another.
 
+```
+Options:
+  -y  Always show next module (no prompt).
+      With `-y`, the only way to gracefully exit is to return non-zero
+      code from the editor.
+```
+
 ## Install
 
 ```

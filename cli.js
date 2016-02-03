@@ -5,6 +5,7 @@ var moduleUsage = require('module-usage'),
     npmGet = require('npm-get'),
     editor = require('string-editor'),
     prompt = require('inquirer').prompt,
+    minimist = require('minimist'),
     Queue = require('push-queue'),
     App = require('help-version');
 
@@ -14,14 +15,30 @@ var path = require('path');
 var app = App([
   'Usage:  module-users <pkgname>',
   '',
-  'Scans npm registry for modules depending on <pkgname> and opens them in',
-  '$EDITOR.'
+  'Scans npm registry for modules that depend on <pkgname> and downloads',
+  'and opens them in $EDITOR, one after another.',
+  '',
+  'Options:',
+  '  -y  Always show next module (no prompt).',
+  '      With `-y`, the only way to gracefully exit is to return non-zero',
+  '      code from the editor.'
 ].join('\n'));
 
 
-(function main (argv) {
+var opts = minimist(process.argv.slice(2), {
+  alias: {
+    yes: 'y'
+  }
+});
+
+
+(function main (opts, argv) {
   if (argv.length != 1) {
     return app.help(1);
+  }
+
+  if (opts.yes) {
+    showPrompt = function (next) { next() };
   }
 
   var enqueue = Queue(function (usage, next) {
@@ -41,7 +58,7 @@ var app = App([
   });
 
   moduleUsage(argv[0]).on('data', enqueue);
-}(process.argv.slice(2)));
+}(opts, opts._));
 
 
 function showPrompt (next) {
