@@ -56,7 +56,7 @@ var opts = minimist(process.argv.slice(2), {
     npmGet(usage.dependant, usage.file, function (err, _, content) {
       if (err) throw err;
 
-      var displayName = moduleName.replace(RegExp(path.sep, 'g'), '|');
+      var displayName = moduleName.replace(RegExp(path.sep, 'g'), '_');
 
       editor(content, displayName, function (err) {
         if (err && /non-zero exit code/.test(err.message)) {
