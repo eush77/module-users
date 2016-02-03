@@ -32,6 +32,7 @@
     "minimist": "^1.2.0",
     "module-usage": "^0.2.1",
     "npm-get": "^0.2.0",
+    "or-die": "0.0.1",
     "push-queue": "^0.1.1",
     "string-editor": "^0.1.2"
   },

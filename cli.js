@@ -6,6 +6,7 @@ var moduleUsage = require('module-usage'),
     editor = require('string-editor'),
     prompt = require('inquirer').prompt,
     minimist = require('minimist'),
+    die = require('or-die'),
     Queue = require('push-queue'),
     App = require('help-version');
 
@@ -51,7 +52,9 @@ var opts = minimist(process.argv.slice(2), {
             .replace(RegExp(path.sep, 'g'), '|');
 
       editor(content, displayName, function (err) {
-        if (err) throw err;
+        if (err && /non-zero exit code/.test(err.message)) return;
+        if (err) return die(err.toString());
+
         showPrompt(next);
       });
     });
