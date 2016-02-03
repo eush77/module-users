@@ -52,10 +52,14 @@ var opts = minimist(process.argv.slice(2), {
             .replace(RegExp(path.sep, 'g'), '|');
 
       editor(content, displayName, function (err) {
-        if (err && /non-zero exit code/.test(err.message)) return;
-        if (err) return die(err.toString());
+        if (err && /non-zero exit code/.test(err.message)) {
+          return process.exit();
+        }
+        if (err) {
+          return die(err.toString());
+        }
 
-        showPrompt(next);
+        showPrompt(next, process.exit);
       });
     });
   });
@@ -64,15 +68,15 @@ var opts = minimist(process.argv.slice(2), {
 }(opts, opts._));
 
 
-function showPrompt (next) {
+// Show prompt and call either `next()` or `stop()` depending
+// on the user input.
+function showPrompt (next, stop) {
   prompt({
     type: 'confirm',
     name: 'answer',
     message: 'Show next module',
     default: true
   }, function (a) {
-    if (a.answer) {
-      next();
-    }
+    (a.answer ? next : stop)();
   });
 }
