@@ -4,6 +4,7 @@
 var moduleUsage = require('module-usage'),
     npmGet = require('npm-get'),
     editor = require('string-editor'),
+    prompt = require('inquirer').prompt,
     Queue = require('push-queue'),
     App = require('help-version');
 
@@ -34,10 +35,24 @@ var app = App([
 
       editor(content, displayName, function (err) {
         if (err) throw err;
-        next();
+        showPrompt(next);
       });
     });
   });
 
   moduleUsage(argv[0]).on('data', enqueue);
 }(process.argv.slice(2)));
+
+
+function showPrompt (next) {
+  prompt({
+    type: 'confirm',
+    name: 'answer',
+    message: 'Show next module',
+    default: true
+  }, function (a) {
+    if (a.answer) {
+      next();
+    }
+  });
+}
