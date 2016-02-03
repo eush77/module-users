@@ -43,7 +43,7 @@ var opts = minimist(process.argv.slice(2), {
   }
 
   var enqueue = Queue(function (usage, next) {
-    console.log('Opening %s...', usage.dependant);
+    console.log('Opening %s/%s...', usage.dependant, usage.file);
 
     npmGet(usage.dependant, usage.file, function (err, _, content) {
       if (err) throw err;
