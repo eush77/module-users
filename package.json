@@ -1,7 +1,7 @@
 {
   "name": "module-users",
   "version": "0.0.0",
-  "description": "Open examples of npm module usage in editor",
+  "description": "Open dependent modules from npm in $EDITOR",
   "author": "Eugene Sharygin <eush77@gmail.com>",
   "license": "MIT",
   "bin": "cli.js",
@@ -21,7 +21,9 @@
     "module",
     "npm",
     "open",
+    "package",
     "usage",
+    "user",
     "view"
   ],
   "dependencies": {

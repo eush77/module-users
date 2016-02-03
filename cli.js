@@ -10,7 +10,13 @@ var moduleUsage = require('module-usage'),
 var path = require('path');
 
 
-var app = App('Usage:  module-users <name>');
+var app = App([
+  'Usage:  module-users <pkgname>',
+  '',
+  'Scans npm registry for modules depending on <pkgname> and opens them in',
+  '$EDITOR.'
+].join('\n'));
+
 
 (function main (argv) {
   if (argv.length != 1) {
