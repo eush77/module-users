@@ -37,19 +37,26 @@ var opts = minimist(process.argv.slice(2), {
   if (argv.length != 1) {
     return app.help(1);
   }
-
   if (opts.yes) {
     showPrompt = function (next) { next() };
   }
 
+  var lastModuleName;
+
   var enqueue = Queue(function (usage, next) {
-    console.log('Opening %s/%s...', usage.dependant, usage.file);
+    var moduleName = path.join(usage.dependant, usage.file);
+
+    if (moduleName == lastModuleName) {
+      return next();
+    }
+    lastModuleName = moduleName;
+
+    console.log('Opening %s...', moduleName);
 
     npmGet(usage.dependant, usage.file, function (err, _, content) {
       if (err) throw err;
 
-      var displayName = path.join(usage.dependant, usage.file)
-            .replace(RegExp(path.sep, 'g'), '|');
+      var displayName = moduleName.replace(RegExp(path.sep, 'g'), '|');
 
       editor(content, displayName, function (err) {
         if (err && /non-zero exit code/.test(err.message)) {
