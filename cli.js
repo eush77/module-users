@@ -38,22 +38,28 @@ var opts = minimist(process.argv.slice(2), {
     return app.help(1);
   }
   if (opts.yes) {
-    showPrompt = function (next) { next() };
+    showPrompt = function (callbacks) { callbacks.next() };
   }
 
+  // Last module name, includes package name and path inside package.
+  // Used to filter multiple uses inside a single file.
   var lastModuleName;
 
-  var enqueue = Queue(function (usage, next) {
-    var moduleName = path.join(usage.dependant, usage.file);
+  // Either nullish or string. If string, indicates a package name to skip.
+  var skipPackageName;
 
-    if (moduleName == lastModuleName) {
+  var enqueue = Queue(function (usage, next) {
+    var packageName = usage.dependant;
+    var moduleName = path.join(packageName, usage.file);
+
+    if (packageName == skipPackageName || moduleName == lastModuleName) {
       return next();
     }
     lastModuleName = moduleName;
 
     console.log('Opening %s...', moduleName);
 
-    npmGet(usage.dependant, usage.file, function (err, _, content) {
+    npmGet(packageName, usage.file, function (err, _, content) {
       if (err) throw err;
 
       var displayName = moduleName.replace(RegExp(path.sep, 'g'), '_');
@@ -66,7 +72,14 @@ var opts = minimist(process.argv.slice(2), {
           return die(err.toString());
         }
 
-        showPrompt(next, process.exit);
+        showPrompt({
+          next: next,
+          stop: process.exit,
+          skipPackage: function () {
+            skipPackageName = packageName;
+            next();
+          }
+        });
       });
     });
   });
@@ -75,15 +88,33 @@ var opts = minimist(process.argv.slice(2), {
 }(opts, opts._));
 
 
-// Show prompt and call either `next()` or `stop()` depending
-// on the user input.
-function showPrompt (next, stop) {
+// Show prompt and call a callback depending on the user input.
+function showPrompt (callbacks) {
   prompt({
-    type: 'confirm',
+    type: 'expand',
     name: 'answer',
-    message: 'Show next module',
-    default: true
+    message: 'Next module?',
+    choices: [{
+      name: 'Yes',
+      value: 'next',
+      key: 'y'
+    }, {
+      name: 'No',
+      value: 'stop',
+      key: 'n'
+    }, {
+      name: 'Skip this package',
+      short: 'Skip package',  // Doesn't work as of 0.11.4.
+      value: 'skipPackage',
+      key: 's'
+    }]
   }, function (a) {
-    (a.answer ? next : stop)();
+    var callback = callbacks[a.answer];
+
+    if (typeof callback != 'function') {
+      throw Error('Unimplemented: ' + a.answer);
+    }
+
+    return callback();
   });
 }
