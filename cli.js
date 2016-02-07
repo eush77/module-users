@@ -27,6 +27,7 @@ var app = App([
 
 
 var opts = minimist(process.argv.slice(2), {
+  boolean: 'y',
   alias: {
     yes: 'y'
   }
