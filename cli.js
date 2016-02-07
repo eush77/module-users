@@ -38,7 +38,9 @@ var opts = minimist(process.argv.slice(2), {
     return app.help(1);
   }
   if (opts.yes) {
-    showPrompt = function (callbacks) { callbacks.next() };
+    showPrompt = function (moduleName, callbacks) {
+      callbacks.open();
+    };
   }
 
   // Last module name, includes package name and path inside package.
@@ -57,31 +59,34 @@ var opts = minimist(process.argv.slice(2), {
     }
     lastModuleName = moduleName;
 
-    console.log('Opening %s...', moduleName);
+    showPrompt(moduleName, {
+      open: open,
+      quit: process.exit,
+      skipPackage: skipPackage
+    });
 
-    npmGet(packageName, usage.file, function (err, _, content) {
-      if (err) throw err;
+    function skipPackage () {
+      skipPackageName = packageName;
+      next();
+    }
 
-      var displayName = moduleName.replace(RegExp(path.sep, 'g'), '_');
+    function open () {
+      npmGet(packageName, usage.file, function (err, _, content) {
+        if (err) throw err;
 
-      editor(content, displayName, function (err) {
-        if (err && /non-zero exit code/.test(err.message)) {
-          return process.exit();
-        }
-        if (err) {
-          return die(err.toString());
-        }
+        var displayName = moduleName.replace(RegExp(path.sep, 'g'), '_');
 
-        showPrompt({
-          next: next,
-          stop: process.exit,
-          skipPackage: function () {
-            skipPackageName = packageName;
-            next();
+        editor(content, displayName, function (err) {
+          if (err && /non-zero exit code/.test(err.message)) {
+            return process.exit();
           }
+          if (err) {
+            return die(err.toString());
+          }
+          next();
         });
       });
-    });
+    }
   });
 
   moduleUsage(argv[0]).on('data', enqueue);
@@ -89,19 +94,19 @@ var opts = minimist(process.argv.slice(2), {
 
 
 // Show prompt and call a callback depending on the user input.
-function showPrompt (callbacks) {
+function showPrompt (moduleName, callbacks) {
   prompt({
     type: 'expand',
     name: 'answer',
-    message: 'Next module?',
+    message: 'Open ' + moduleName,
     choices: [{
-      name: 'Yes',
-      value: 'next',
-      key: 'y'
+      name: 'Open',
+      value: 'open',
+      key: 'o'
     }, {
-      name: 'No',
-      value: 'stop',
-      key: 'n'
+      name: 'Quit',
+      value: 'quit',
+      key: 'q'
     }, {
       name: 'Skip this package',
       short: 'Skip package',  // Doesn't work as of 0.11.4.
