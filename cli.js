@@ -62,8 +62,9 @@ var opts = minimist(process.argv.slice(2), {
 
     showPrompt(moduleName, {
       open: open,
-      quit: process.exit,
-      skipPackage: skipPackage
+      skip: next,
+      skipPackage: skipPackage,
+      quit: process.exit
     });
 
     function skipPackage () {
@@ -105,14 +106,19 @@ function showPrompt (moduleName, callbacks) {
       value: 'open',
       key: 'o'
     }, {
-      name: 'Quit',
-      value: 'quit',
-      key: 'q'
+      name: 'Skip this module',
+      short: 'Skip',  // Doesn't work as of 0.11.4.
+      value: 'skip',
+      key: 's'
     }, {
       name: 'Skip this package',
       short: 'Skip package',  // Doesn't work as of 0.11.4.
       value: 'skipPackage',
-      key: 's'
+      key: 'p'
+    }, {
+      name: 'Quit',
+      value: 'quit',
+      key: 'q'
     }]
   }, function (a) {
     var callback = callbacks[a.answer];
