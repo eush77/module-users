@@ -64,7 +64,7 @@ var opts = minimist(process.argv.slice(2), {
       open: open,
       skip: next,
       skipPackage: skipPackage,
-      quit: process.exit
+      quit: shutdown
     });
 
     function skipPackage () {
@@ -80,7 +80,7 @@ var opts = minimist(process.argv.slice(2), {
 
         editor(content, displayName, function (err) {
           if (err && /non-zero exit code/.test(err.message)) {
-            return process.exit();
+            return shutdown();
           }
           if (err) {
             return die(err.toString());
@@ -91,7 +91,8 @@ var opts = minimist(process.argv.slice(2), {
     }
   });
 
-  moduleUsage(argv[0]).on('data', enqueue);
+  var usageStream = moduleUsage(argv[0]).on('data', enqueue);
+  var shutdown = usageStream.destroy.bind(usageStream);
 }(opts, opts._));
 
 
